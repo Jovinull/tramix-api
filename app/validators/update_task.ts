@@ -1,4 +1,4 @@
-import vine from '@vinejs/vine'
+import vine from '@vinejs/vine';
 
 export const updateTaskValidator = vine.compile(
   vine.object({
@@ -6,4 +6,4 @@ export const updateTaskValidator = vine.compile(
     description: vine.string().trim().maxLength(1000).optional(),
     done: vine.boolean().optional(),
   })
-)
+);

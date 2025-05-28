@@ -1,15 +1,16 @@
 import { configApp } from '@adonisjs/eslint-config';
-import prettier from 'eslint-config-prettier';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
   ...configApp(),
   {
     plugins: {
-      prettier: require('eslint-plugin-prettier'),
+      prettier: eslintPluginPrettier,
     },
     rules: {
       'prettier/prettier': 'error',
     },
   },
-  prettier,
+  eslintConfigPrettier,
 ];

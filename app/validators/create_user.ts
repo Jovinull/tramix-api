@@ -1,4 +1,4 @@
-import vine from '@vinejs/vine'
+import vine from '@vinejs/vine';
 
 export const createUserValidator = vine.compile(
   vine.object({
@@ -8,9 +8,9 @@ export const createUserValidator = vine.compile(
       .email()
       .normalizeEmail()
       .unique(async (db, value) => {
-        const match = await db.from('users').select('id').where('email', value).first()
-        return !match
+        const match = await db.from('users').select('id').where('email', value).first();
+        return !match;
       }),
     password: vine.string().minLength(6),
   })
-)
+);

@@ -1,4 +1,4 @@
-import vine from '@vinejs/vine'
+import vine from '@vinejs/vine';
 
 export const createSessionValidator = vine.compile(
   vine.object({
@@ -6,4 +6,4 @@ export const createSessionValidator = vine.compile(
 
     password: vine.string().minLength(6),
   })
-)
+);

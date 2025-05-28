@@ -1,5 +1,5 @@
-import User from '#models/user'
-import { BaseSeeder } from '@adonisjs/lucid/seeders'
+import User from '#models/user';
+import { BaseSeeder } from '@adonisjs/lucid/seeders';
 
 export default class extends BaseSeeder {
   async run() {
@@ -19,6 +19,6 @@ export default class extends BaseSeeder {
         email: 'gilbertobispo@gmail.com',
         password: 'secret',
       },
-    ])
+    ]);
   }
 }

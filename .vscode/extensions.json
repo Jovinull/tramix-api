@@ -2,6 +2,12 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "EditorConfig.EditorConfig"
+    "EditorConfig.EditorConfig",
+    "jripouteau.adonis-vscode-extension",
+    "mikestead.dotenv",
+    "eamodio.gitlens",
+    "christian-kohler.path-intellisense",
+    "PKief.material-icon-theme",
+    "rangav.vscode-thunder-client"
   ]
 }

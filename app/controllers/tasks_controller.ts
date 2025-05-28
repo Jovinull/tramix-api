@@ -1,8 +1,8 @@
-import Task from '#models/task'
-import { createTaskValidator } from '#validators/create_task'
-import { updateTaskValidator } from '#validators/update_task'
-import { idParamValidator } from '#validators/id_param'
-import type { HttpContext } from '@adonisjs/core/http'
+import Task from '#models/task';
+import { createTaskValidator } from '#validators/create_task';
+import { updateTaskValidator } from '#validators/update_task';
+import { idParamValidator } from '#validators/id_param';
+import type { HttpContext } from '@adonisjs/core/http';
 
 export default class TasksController {
   /**
@@ -10,12 +10,12 @@ export default class TasksController {
    */
   async index({ auth, response }: HttpContext) {
     try {
-      const user = auth.user!
-      await user.preload('tasks')
-      return response.ok(user.tasks)
+      const user = auth.user!;
+      await user.preload('tasks');
+      return response.ok(user.tasks);
     } catch (error) {
-      console.error('Erro ao listar tarefas:', error)
-      return response.internalServerError({ message: 'Erro interno ao listar tarefas' })
+      console.error('Erro ao listar tarefas:', error);
+      return response.internalServerError({ message: 'Erro interno ao listar tarefas' });
     }
   }
 
@@ -24,20 +24,20 @@ export default class TasksController {
    */
   async store({ request, response, auth }: HttpContext) {
     try {
-      const { title, description } = await request.validateUsing(createTaskValidator)
-      const user = auth.user!
-      const task = await user.related('tasks').create({ title, description })
-      return response.created(task)
+      const { title, description } = await request.validateUsing(createTaskValidator);
+      const user = auth.user!;
+      const task = await user.related('tasks').create({ title, description });
+      return response.created(task);
     } catch (error) {
       if (typeof error === 'object' && error !== null && 'messages' in error) {
         return response.badRequest({
           message: 'Erro de validação',
           errors: (error as any).messages,
-        })
+        });
       }
 
-      console.error('Erro ao criar tarefa:', error)
-      return response.internalServerError({ message: 'Erro interno ao criar tarefa' })
+      console.error('Erro ao criar tarefa:', error);
+      return response.internalServerError({ message: 'Erro interno ao criar tarefa' });
     }
   }
 
@@ -46,16 +46,21 @@ export default class TasksController {
    */
   async show({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { data: params })
-      const task = await Task.findOrFail(params.id)
-      return response.ok(task)
+      await request.validateUsing(idParamValidator, { data: params });
+      const task = await Task.findOrFail(params.id);
+      return response.ok(task);
     } catch (error) {
-      if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
-        return response.notFound({ message: 'Tarefa não encontrada' })
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (error as any).code === 'E_ROW_NOT_FOUND'
+      ) {
+        return response.notFound({ message: 'Tarefa não encontrada' });
       }
 
-      console.error('Erro ao buscar tarefa:', error)
-      return response.internalServerError({ message: 'Erro interno ao buscar tarefa' })
+      console.error('Erro ao buscar tarefa:', error);
+      return response.internalServerError({ message: 'Erro interno ao buscar tarefa' });
     }
   }
 
@@ -64,30 +69,30 @@ export default class TasksController {
    */
   async update({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { data: params })
-      const task = await Task.findOrFail(params.id)
-      const payload = await request.validateUsing(updateTaskValidator)
+      await request.validateUsing(idParamValidator, { data: params });
+      const task = await Task.findOrFail(params.id);
+      const payload = await request.validateUsing(updateTaskValidator);
 
-      task.merge(payload)
-      await task.save()
+      task.merge(payload);
+      await task.save();
 
-      return response.ok(task)
+      return response.ok(task);
     } catch (error) {
       if (typeof error === 'object' && error !== null) {
         if ('code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
-          return response.notFound({ message: 'Tarefa não encontrada para atualização' })
+          return response.notFound({ message: 'Tarefa não encontrada para atualização' });
         }
 
         if ('messages' in error) {
           return response.badRequest({
             message: 'Erro de validação',
             errors: (error as any).messages,
-          })
+          });
         }
       }
 
-      console.error('Erro ao atualizar tarefa:', error)
-      return response.internalServerError({ message: 'Erro interno ao atualizar tarefa' })
+      console.error('Erro ao atualizar tarefa:', error);
+      return response.internalServerError({ message: 'Erro interno ao atualizar tarefa' });
     }
   }
 
@@ -96,18 +101,23 @@ export default class TasksController {
    */
   async destroy({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { data: params })
-      const task = await Task.findOrFail(params.id)
-      await task.delete()
+      await request.validateUsing(idParamValidator, { data: params });
+      const task = await Task.findOrFail(params.id);
+      await task.delete();
 
-      return response.noContent()
+      return response.noContent();
     } catch (error) {
-      if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
-        return response.notFound({ message: 'Tarefa não encontrada para exclusão' })
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (error as any).code === 'E_ROW_NOT_FOUND'
+      ) {
+        return response.notFound({ message: 'Tarefa não encontrada para exclusão' });
       }
 
-      console.error('Erro ao excluir tarefa:', error)
-      return response.internalServerError({ message: 'Erro interno ao excluir tarefa' })
+      console.error('Erro ao excluir tarefa:', error);
+      return response.internalServerError({ message: 'Erro interno ao excluir tarefa' });
     }
   }
 }
