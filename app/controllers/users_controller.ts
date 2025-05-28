@@ -69,13 +69,27 @@ export default class UsersController {
    */
   async update({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { meta: params }) // valida ID
+      await request.validateUsing(idParamValidator, {
+        data: params,
+      })
 
       const user = await User.findOrFail(params.id)
 
       const payload = await request.validateUsing(updateUserValidator, {
         meta: { id: params.id },
       })
+
+      // Verifica se o email está sendo alterado para outro já existente
+      if (payload.email && payload.email !== user.email) {
+        const emailExists = await User.query()
+          .where('email', payload.email)
+          .whereNot('id', user.id)
+          .first()
+
+        if (emailExists) {
+          return response.badRequest({ message: 'E-mail já está em uso por outro usuário' })
+        }
+      }
 
       user.merge(payload)
       await user.save()
