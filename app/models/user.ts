@@ -37,6 +37,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   static accessTokens = DbAccessTokensProvider.forModel(User)
 
-  @hasMany(()=> Task)
+  @hasMany(() => Task)
   declare tasks: HasMany<typeof Task>
 }

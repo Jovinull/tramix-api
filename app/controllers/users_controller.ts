@@ -33,8 +33,11 @@ export default class UsersController {
     } catch (error) {
       console.error('Erro ao criar usuário:', error)
 
-      if (error.messages) {
-        return response.badRequest({ message: 'Erro de validação', errors: error.messages })
+      if (typeof error === 'object' && error !== null && 'messages' in error) {
+        return response.badRequest({
+          message: 'Erro de validação',
+          errors: (error as any).messages,
+        })
       }
 
       return response.internalServerError({ message: 'Erro interno ao criar usuário' })
@@ -46,16 +49,13 @@ export default class UsersController {
    */
   async show({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { data: params }) // valida ID
-      
-      const user = await User.query()
-        .where('id', params.id)
-        .preload('tasks')
-        .firstOrFail()
+      await request.validateUsing(idParamValidator, { data: params })
+
+      const user = await User.query().where('id', params.id).preload('tasks').firstOrFail()
 
       return response.ok(user)
     } catch (error) {
-      if (error.code === 'E_ROW_NOT_FOUND') {
+      if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
         return response.notFound({ message: 'Usuário não encontrado' })
       }
 
@@ -69,9 +69,7 @@ export default class UsersController {
    */
   async update({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, {
-        data: params,
-      })
+      await request.validateUsing(idParamValidator, { data: params })
 
       const user = await User.findOrFail(params.id)
 
@@ -96,12 +94,17 @@ export default class UsersController {
 
       return response.ok(user)
     } catch (error) {
-      if (error.code === 'E_ROW_NOT_FOUND') {
-        return response.notFound({ message: 'Usuário não encontrado para atualização' })
-      }
+      if (typeof error === 'object' && error !== null) {
+        if ('code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
+          return response.notFound({ message: 'Usuário não encontrado para atualização' })
+        }
 
-      if (error.messages) {
-        return response.badRequest({ message: 'Erro de validação', errors: error.messages })
+        if ('messages' in error) {
+          return response.badRequest({
+            message: 'Erro de validação',
+            errors: (error as any).messages,
+          })
+        }
       }
 
       console.error('Erro ao atualizar usuário:', error)
@@ -114,14 +117,14 @@ export default class UsersController {
    */
   async destroy({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { data: params }) // valida ID
+      await request.validateUsing(idParamValidator, { data: params })
 
       const user = await User.findOrFail(params.id)
       await user.delete()
 
       return response.noContent()
     } catch (error) {
-      if (error.code === 'E_ROW_NOT_FOUND') {
+      if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
         return response.notFound({ message: 'Usuário não encontrado para exclusão' })
       }
 

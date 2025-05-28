@@ -10,7 +10,8 @@ export default class extends BaseSchema {
       table.text('description', 'longText').nullable()
       table.boolean('done').nullable().defaultTo(false)
 
-      table.integer('user_id')
+      table
+        .integer('user_id')
         .notNullable()
         .unsigned()
         .references('id')

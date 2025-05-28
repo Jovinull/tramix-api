@@ -25,14 +25,15 @@ export default class TasksController {
   async store({ request, response, auth }: HttpContext) {
     try {
       const { title, description } = await request.validateUsing(createTaskValidator)
-
       const user = auth.user!
       const task = await user.related('tasks').create({ title, description })
-
       return response.created(task)
     } catch (error) {
-      if (error.messages) {
-        return response.badRequest({ message: 'Erro de validação', errors: error.messages })
+      if (typeof error === 'object' && error !== null && 'messages' in error) {
+        return response.badRequest({
+          message: 'Erro de validação',
+          errors: (error as any).messages,
+        })
       }
 
       console.error('Erro ao criar tarefa:', error)
@@ -46,11 +47,10 @@ export default class TasksController {
   async show({ params, request, response }: HttpContext) {
     try {
       await request.validateUsing(idParamValidator, { data: params })
-
       const task = await Task.findOrFail(params.id)
       return response.ok(task)
     } catch (error) {
-      if (error.code === 'E_ROW_NOT_FOUND') {
+      if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
         return response.notFound({ message: 'Tarefa não encontrada' })
       }
 
@@ -65,7 +65,6 @@ export default class TasksController {
   async update({ params, request, response }: HttpContext) {
     try {
       await request.validateUsing(idParamValidator, { data: params })
-
       const task = await Task.findOrFail(params.id)
       const payload = await request.validateUsing(updateTaskValidator)
 
@@ -74,12 +73,17 @@ export default class TasksController {
 
       return response.ok(task)
     } catch (error) {
-      if (error.code === 'E_ROW_NOT_FOUND') {
-        return response.notFound({ message: 'Tarefa não encontrada para atualização' })
-      }
+      if (typeof error === 'object' && error !== null) {
+        if ('code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
+          return response.notFound({ message: 'Tarefa não encontrada para atualização' })
+        }
 
-      if (error.messages) {
-        return response.badRequest({ message: 'Erro de validação', errors: error.messages })
+        if ('messages' in error) {
+          return response.badRequest({
+            message: 'Erro de validação',
+            errors: (error as any).messages,
+          })
+        }
       }
 
       console.error('Erro ao atualizar tarefa:', error)
@@ -93,13 +97,12 @@ export default class TasksController {
   async destroy({ params, request, response }: HttpContext) {
     try {
       await request.validateUsing(idParamValidator, { data: params })
-
       const task = await Task.findOrFail(params.id)
       await task.delete()
 
       return response.noContent()
     } catch (error) {
-      if (error.code === 'E_ROW_NOT_FOUND') {
+      if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'E_ROW_NOT_FOUND') {
         return response.notFound({ message: 'Tarefa não encontrada para exclusão' })
       }
 

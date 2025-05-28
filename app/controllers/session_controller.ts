@@ -15,14 +15,26 @@ export default class SessionController {
 
       return response.ok({ token, user })
     } catch (error) {
-      if (error.name === 'E_INVALID_AUTH_UID' || error.name === 'E_INVALID_AUTH_PASSWORD') {
+      // Erros de autenticação
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'name' in error &&
+        (error as any).name === 'E_INVALID_AUTH_UID' ||
+        (error as any).name === 'E_INVALID_AUTH_PASSWORD'
+      ) {
         return response.unauthorized({ message: 'Credenciais inválidas' })
       }
 
-      if (error.messages) {
-        return response.badRequest({ message: 'Erro de validação', errors: error.messages })
+      // Erros de validação
+      if (typeof error === 'object' && error !== null && 'messages' in error) {
+        return response.badRequest({
+          message: 'Erro de validação',
+          errors: (error as any).messages,
+        })
       }
 
+      // Outros erros
       console.error('Erro ao autenticar usuário:', error)
       return response.internalServerError({ message: 'Erro interno no login' })
     }

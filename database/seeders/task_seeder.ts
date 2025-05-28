@@ -1,5 +1,5 @@
-import Task from '#models/task'
-import { BaseSeeder } from '@adonisjs/lucid/seeders'
+import Task from '#models/task';
+import { BaseSeeder } from '@adonisjs/lucid/seeders';
 
 export default class extends BaseSeeder {
   async run() {
@@ -24,6 +24,6 @@ export default class extends BaseSeeder {
         description: 'Estou estudando fundamentos de TypeScript',
         userId: 3,
       },
-    ])
+    ]);
   }
 }
