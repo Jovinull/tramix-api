@@ -46,7 +46,7 @@ export default class UsersController {
    */
   async show({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { meta: params }) // valida ID
+      await request.validateUsing(idParamValidator, { data: params }) // valida ID
       
       const user = await User.query()
         .where('id', params.id)
@@ -114,7 +114,7 @@ export default class UsersController {
    */
   async destroy({ params, request, response }: HttpContext) {
     try {
-      await request.validateUsing(idParamValidator, { meta: params }) // valida ID
+      await request.validateUsing(idParamValidator, { data: params }) // valida ID
 
       const user = await User.findOrFail(params.id)
       await user.delete()
