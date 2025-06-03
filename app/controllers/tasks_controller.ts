@@ -80,4 +80,15 @@ export default class TasksController implements ControllerInterface {
       return response.internalServerError({ message: 'Erro interno ao excluir tarefa' });
     }
   }
+
+  async myTasks({ auth, response }: HttpContext) {
+    try {
+      const user = auth.user!;
+      const tasks = await this.service.getByUserId(user.id);
+      return response.ok(tasks);
+    } catch (error) {
+      console.error('Erro ao listar minhas tarefas:', error);
+      return response.internalServerError({ message: 'Erro ao buscar tarefas do usuário' });
+    }
+  }
 }

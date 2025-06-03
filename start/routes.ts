@@ -24,6 +24,7 @@ router
         router.get('/tasks/:id', [TasksController, 'show']).as('tasks.show');
         router.put('/tasks/:id', [TasksController, 'update']).as('tasks.update');
         router.delete('/tasks/:id', [TasksController, 'destroy']).as('tasks.destroy');
+        router.get('/my-tasks', [TasksController, 'myTasks']).as('tasks.myTasks');
 
         router.get('/sessions', [SessionController, 'destroy']).as('sessions.destroy');
       })

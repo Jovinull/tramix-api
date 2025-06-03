@@ -29,4 +29,8 @@ export class TaskRepository implements RepositoryInterface<Task> {
     await task.delete();
     return true;
   }
+
+  async findByUserId(userId: number): Promise<Task[]> {
+    return await Task.query().where('user_id', userId).orderBy('created_at', 'desc');
+  }
 }

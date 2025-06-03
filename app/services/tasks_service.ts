@@ -24,4 +24,8 @@ export class TaskService implements ServiceInterface<Task> {
   async delete(id: number) {
     return this.repository.delete(id);
   }
+
+  async getByUserId(userId: number) {
+    return this.repository.findByUserId(userId);
+  }
 }
